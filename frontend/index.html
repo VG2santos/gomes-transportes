@@ -3,31 +3,91 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Gomes Transportes</title>
+
+<style>
+body{font-family:Arial;background:#f5f5f5;padding:15px}
+h1{text-align:center}
+.card{background:white;padding:15px;margin-bottom:10px;border-radius:8px}
+input,select,button{width:100%;padding:10px;margin:5px 0}
+button{background:#0d47a1;color:white;border:none}
+.stats{display:flex;gap:10px;flex-wrap:wrap}
+.stat{flex:1;background:white;padding:10px;text-align:center;border-radius:8px}
+</style>
+
 </head>
 <body>
 
-<h2>Gomes Transportes</h2>
+<h1>Gomes Transportes</h1>
+
+<div class="stats">
+<div class="stat">Faturamento<br><b id="fat">0</b></div>
+<div class="stat">Recebido<br><b id="rec">0</b></div>
+<div class="stat">Pendente<br><b id="pen">0</b></div>
+<div class="stat">Cargas<br><b id="car">0</b></div>
+</div>
+
+<div class="card">
+
+<h3>Nova Viagem</h3>
 
 <form id="form">
-<input type="date" name="data"><br>
+
+<input type="date" name="data">
+
 <select name="caminhao">
 <option>FDB-0A70</option>
 <option>AOP-6E88</option>
-</select><br>
-<input name="cliente" placeholder="Cliente"><br>
-<input name="destino" placeholder="Destino"><br>
-<input name="valor_frete" placeholder="Frete"><br>
-<input name="valor_recebido" placeholder="Recebido"><br>
+</select>
+
+<input name="cliente" placeholder="Cliente">
+<input name="destino" placeholder="Destino">
+
+<input type="number" name="valor_frete" placeholder="Valor frete">
+<input type="number" name="valor_recebido" placeholder="Valor recebido">
+
+<select name="status">
+<option>Pago</option>
+<option>Pendente</option>
+<option>Parcial</option>
+</select>
+
 <button>Salvar</button>
+
 </form>
 
+</div>
+
 <script>
+
+async function carregar(){
+ const r = await fetch("/dashboard")
+ const d = await r.json()
+
+ document.getElementById("fat").innerText = d.faturamento
+ document.getElementById("rec").innerText = d.recebido
+ document.getElementById("pen").innerText = d.pendente
+ document.getElementById("car").innerText = d.total_cargas
+}
+
+carregar()
+
 document.getElementById("form").addEventListener("submit", async e=>{
- e.preventDefault();
- const data = Object.fromEntries(new FormData(e.target));
- await fetch("/viagem",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});
- alert("Salvo!");
-});
+ e.preventDefault()
+
+ const data = Object.fromEntries(new FormData(e.target))
+
+ await fetch("/viagem",{
+ method:"POST",
+ headers:{"Content-Type":"application/json"},
+ body:JSON.stringify(data)
+ })
+
+ alert("Salvo!")
+ e.target.reset()
+
+ carregar()
+})
+
 </script>
 
 </body>
