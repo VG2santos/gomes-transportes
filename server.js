@@ -54,4 +54,8 @@ app.get("/dashboard", async(req,res)=>{
  });
 });
 
+app.get("/viagens", async (req,res)=>{
+ const result = await pool.query("SELECT * FROM viagens ORDER BY id DESC");
+ res.json(result.rows);
+});
 app.listen(3000, ()=> console.log("Rodando..."));
