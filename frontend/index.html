@@ -54,10 +54,29 @@ button{background:#0d47a1;color:white;border:none}
 <button>Salvar</button>
 
 </form>
+ <h3>Viagens cadastradas</h3>
+<div id="lista"></div>
 
 </div>
 
 <script>
+ async function carregarViagens(){
+ const r = await fetch("/viagens")
+ const dados = await r.json()
+
+ const lista = document.getElementById("lista")
+ lista.innerHTML = ""
+
+ dados.forEach(v=>{
+  lista.innerHTML += `
+   <div style="background:white;margin:5px;padding:10px;border-radius:5px">
+    <b>${v.data}</b> - ${v.caminhao}<br>
+    ${v.cliente} → ${v.destino}<br>
+    Frete: ${v.valor_frete} | Recebido: ${v.valor_recebido} | Pendente: ${v.valor_pendente}
+   </div>
+  `
+ })
+}
 
 async function carregar(){
  const r = await fetch("/dashboard")
@@ -70,6 +89,7 @@ async function carregar(){
 }
 
 carregar()
+carregarViagens()
 
 document.getElementById("form").addEventListener("submit", async e=>{
  e.preventDefault()
@@ -83,6 +103,7 @@ document.getElementById("form").addEventListener("submit", async e=>{
  })
 
  alert("Salvo!")
+ carregarViagens()
  e.target.reset()
 
  carregar()
